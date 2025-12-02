@@ -1,5 +1,20 @@
 import { useState, useEffect } from 'react';
-import { Settings, Save, RefreshCw, CheckCircle2, XCircle, ArrowLeft } from 'lucide-react';
+import { 
+  Settings, 
+  Save, 
+  RefreshCw, 
+  CheckCircle2, 
+  XCircle, 
+  ArrowLeft,
+  Building2,
+  FileText,
+  FolderOpen,
+  DollarSign,
+  PenTool,
+  CreditCard,
+  Clock,
+  Calculator
+} from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -19,6 +34,7 @@ interface IntegrationConfig {
 }
 
 interface WorkflowSettings {
+  companyName?: string;
   integrations: {
     // Practice Management
     practiceCS: IntegrationConfig;
@@ -41,15 +57,11 @@ interface WorkflowSettings {
     smartVault: IntegrationConfig;
     safeSendReturns: IntegrationConfig;
     
-    // Client Portal & Communication
-    liscio: IntegrationConfig;
-    safeSendExchange: IntegrationConfig;
-    taxDomePortal: IntegrationConfig;
-    
     // Accounting
     quickBooksOnline: IntegrationConfig;
     xero: IntegrationConfig;
     sage: IntegrationConfig;
+    freshBooks: IntegrationConfig;
     
     // E-Signature
     docuSign: IntegrationConfig;
@@ -80,73 +92,73 @@ interface WorkflowSettings {
 const integrationCategories = [
   {
     name: 'Practice Management',
+    icon: Building2,
     integrations: [
-      { key: 'practiceCS', label: 'Practice CS', description: 'Thomson Reuters practice management' },
-      { key: 'cchAxcessPractice', label: 'CCH Axcess Practice', description: 'Wolters Kluwer practice management' },
-      { key: 'karbon', label: 'Karbon', description: 'Modern practice management platform' },
-      { key: 'taxDome', label: 'TaxDome', description: 'All-in-one practice management' },
-      { key: 'canopy', label: 'Canopy', description: 'Practice management for tax & accounting' },
-      { key: 'financialCents', label: 'Financial Cents', description: 'Client accounting services platform' },
+      { key: 'practiceCS', label: 'Practice CS', description: 'Thomson Reuters practice management', domain: 'thomsonreuters.com' },
+      { key: 'cchAxcessPractice', label: 'CCH Axcess Practice', description: 'Wolters Kluwer practice management', domain: 'wolterskluwer.com' },
+      { key: 'karbon', label: 'Karbon', description: 'Modern practice management platform', domain: 'karbonhq.com' },
+      { key: 'taxDome', label: 'TaxDome', description: 'All-in-one practice management', domain: 'taxdome.com' },
+      { key: 'canopy', label: 'Canopy', description: 'Practice management for tax & accounting', domain: 'getcanopy.com' },
+      { key: 'financialCents', label: 'Financial Cents', description: 'Client accounting services platform', domain: 'financialcents.com' },
     ],
   },
   {
     name: 'Tax Software',
+    icon: FileText,
     integrations: [
-      { key: 'ultraTaxCS', label: 'UltraTax CS', description: 'Thomson Reuters tax preparation' },
-      { key: 'proSeries', label: 'ProSeries', description: 'Intuit professional tax software' },
-      { key: 'lacerte', label: 'Lacerte', description: 'Intuit premium tax software' },
-      { key: 'drakeTax', label: 'Drake Tax', description: 'Drake Software tax preparation' },
-      { key: 'atx', label: 'ATX', description: 'Wolters Kluwer tax software' },
+      { key: 'ultraTaxCS', label: 'UltraTax CS', description: 'Thomson Reuters tax preparation', domain: 'thomsonreuters.com' },
+      { key: 'proSeries', label: 'ProSeries', description: 'Intuit professional tax software', domain: 'intuit.com' },
+      { key: 'lacerte', label: 'Lacerte', description: 'Intuit premium tax software', domain: 'intuit.com' },
+      { key: 'drakeTax', label: 'Drake Tax', description: 'Drake Software tax preparation', domain: 'drakesoftware.com' },
+      { key: 'atx', label: 'ATX', description: 'Wolters Kluwer tax software', domain: 'wolterskluwer.com' },
     ],
   },
   {
     name: 'Document Management',
+    icon: FolderOpen,
     integrations: [
-      { key: 'workpapersCS', label: 'Workpapers CS', description: 'Thomson Reuters workpaper management' },
-      { key: 'shareFile', label: 'ShareFile', description: 'Citrix secure file sharing' },
-      { key: 'smartVault', label: 'SmartVault', description: 'Cloud document management' },
-      { key: 'safeSendReturns', label: 'SafeSend Returns', description: 'Tax return delivery & e-signature' },
-    ],
-  },
-  {
-    name: 'Client Portal & Communication',
-    integrations: [
-      { key: 'liscio', label: 'Liscio', description: 'Client collaboration platform' },
-      { key: 'safeSendExchange', label: 'SafeSend Exchange', description: 'Client portal & document exchange' },
-      { key: 'taxDomePortal', label: 'TaxDome Portal', description: 'Integrated client portal' },
+      { key: 'workpapersCS', label: 'Workpapers CS', description: 'Thomson Reuters workpaper management', domain: 'thomsonreuters.com' },
+      { key: 'shareFile', label: 'ShareFile', description: 'Citrix secure file sharing', domain: 'sharefile.com' },
+      { key: 'smartVault', label: 'SmartVault', description: 'Cloud document management', domain: 'smartvault.com' },
+      { key: 'safeSendReturns', label: 'SafeSend Returns', description: 'Tax return delivery & e-signature', domain: 'safesend.com' },
     ],
   },
   {
     name: 'Accounting',
+    icon: Calculator,
     integrations: [
-      { key: 'quickBooksOnline', label: 'QuickBooks Online', description: 'Intuit cloud accounting' },
-      { key: 'xero', label: 'Xero', description: 'Cloud accounting platform' },
-      { key: 'sage', label: 'Sage', description: 'Sage accounting solutions' },
+      { key: 'quickBooksOnline', label: 'QuickBooks Online', description: 'Intuit cloud accounting', domain: 'quickbooks.intuit.com' },
+      { key: 'xero', label: 'Xero', description: 'Cloud accounting platform', domain: 'xero.com' },
+      { key: 'sage', label: 'Sage', description: 'Sage accounting solutions', domain: 'sage.com' },
+      { key: 'freshBooks', label: 'FreshBooks', description: 'Cloud accounting for small business', domain: 'freshbooks.com' },
     ],
   },
   {
     name: 'E-Signature',
+    icon: PenTool,
     integrations: [
-      { key: 'docuSign', label: 'DocuSign', description: 'Electronic signature platform' },
-      { key: 'adobeSign', label: 'Adobe Sign', description: 'Adobe e-signature solution' },
-      { key: 'rightSignature', label: 'RightSignature', description: 'Citrix e-signature service' },
+      { key: 'docuSign', label: 'DocuSign', description: 'Electronic signature platform', domain: 'docusign.com' },
+      { key: 'adobeSign', label: 'Adobe Sign', description: 'Adobe e-signature solution', domain: 'adobe.com' },
+      { key: 'rightSignature', label: 'RightSignature', description: 'Citrix e-signature service', domain: 'rightsignature.com' },
     ],
   },
   {
     name: 'Payment Processing',
+    icon: CreditCard,
     integrations: [
-      { key: 'lawPay', label: 'LawPay', description: 'Professional payment processing' },
-      { key: 'billCom', label: 'Bill.com', description: 'Business payments platform' },
-      { key: 'stripe', label: 'Stripe', description: 'Online payment processing' },
-      { key: 'paypal', label: 'PayPal', description: 'PayPal business payments' },
+      { key: 'lawPay', label: 'LawPay', description: 'Professional payment processing', domain: 'lawpay.com' },
+      { key: 'billCom', label: 'Bill.com', description: 'Business payments platform', domain: 'bill.com' },
+      { key: 'stripe', label: 'Stripe', description: 'Online payment processing', domain: 'stripe.com' },
+      { key: 'paypal', label: 'PayPal', description: 'PayPal business payments', domain: 'paypal.com' },
     ],
   },
   {
     name: 'Time & Billing',
+    icon: Clock,
     integrations: [
-      { key: 'quickBooksTime', label: 'QuickBooks Time', description: 'Time tracking for accounting' },
-      { key: 'tSheets', label: 'TSheets', description: 'Employee time tracking' },
-      { key: 'bqeCore', label: 'BQE Core', description: 'Professional services automation' },
+      { key: 'quickBooksTime', label: 'QuickBooks Time', description: 'Time tracking for accounting', domain: 'quickbooks.intuit.com' },
+      { key: 'tSheets', label: 'TSheets', description: 'Employee time tracking', domain: 'quickbooks.intuit.com' },
+      { key: 'bqeCore', label: 'BQE Core', description: 'Professional services automation', domain: 'bqe.com' },
     ],
   },
 ];
@@ -210,12 +222,10 @@ export function AdminSettings() {
       shareFile: { enabled: false },
       smartVault: { enabled: false },
       safeSendReturns: { enabled: false },
-      liscio: { enabled: false },
-      safeSendExchange: { enabled: false },
-      taxDomePortal: { enabled: false },
       quickBooksOnline: { enabled: false },
       xero: { enabled: false },
       sage: { enabled: false },
+      freshBooks: { enabled: false },
       docuSign: { enabled: false },
       adobeSign: { enabled: false },
       rightSignature: { enabled: false },
@@ -367,143 +377,197 @@ export function AdminSettings() {
 
         <Tabs defaultValue="integrations" className="space-y-6">
           <TabsList className="bg-white border border-slate-200">
+            <TabsTrigger value="company">Company</TabsTrigger>
             <TabsTrigger value="integrations">Integrations</TabsTrigger>
             <TabsTrigger value="workflow">Workflow Automation</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="integrations" className="space-y-6">
-            {integrationCategories.map((category) => (
-              <Card key={category.name} className="p-6">
-                <h2 className="text-slate-900 mb-1">{category.name}</h2>
-                <p className="text-slate-600 text-sm mb-6">
-                  Connect your {category.name.toLowerCase()} tools
-                </p>
+          <TabsContent value="company" className="space-y-6">
+            <Card className="p-6">
+              <h2 className="text-slate-900 mb-1">Company Information</h2>
+              <p className="text-slate-600 text-sm mb-6">
+                Configure your firm's basic information displayed to clients
+              </p>
 
-                <div className="space-y-4">
-                  {category.integrations.map((integration) => {
-                    const config =
-                      settings.integrations[
-                        integration.key as keyof typeof settings.integrations
-                      ];
-                    const isEnabled = config.enabled;
-
-                    return (
-                      <div
-                        key={integration.key}
-                        className="border border-slate-200 rounded-lg p-4 hover:border-blue-300 transition-colors"
-                      >
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-1">
-                              <h3 className="text-slate-900">{integration.label}</h3>
-                              {isEnabled ? (
-                                <Badge className="bg-green-100 text-green-700">
-                                  <CheckCircle2 className="w-3 h-3 mr-1" />
-                                  Connected
-                                </Badge>
-                              ) : (
-                                <Badge variant="secondary" className="bg-slate-100 text-slate-600">
-                                  <XCircle className="w-3 h-3 mr-1" />
-                                  Disconnected
-                                </Badge>
-                              )}
-                            </div>
-                            <p className="text-sm text-slate-600">{integration.description}</p>
-                          </div>
-                          <Switch
-                            checked={isEnabled}
-                            onCheckedChange={() => toggleIntegration(integration.key)}
-                          />
-                        </div>
-
-                        {isEnabled && (
-                          <div className="pt-3 border-t border-slate-200 space-y-3">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                              <div>
-                                <Label htmlFor={`${integration.key}-apiKey`} className="text-sm">
-                                  API Key / Credentials
-                                </Label>
-                                <Input
-                                  id={`${integration.key}-apiKey`}
-                                  type="password"
-                                  placeholder="Enter API key..."
-                                  value={config.apiKey || ''}
-                                  onChange={(e) =>
-                                    updateIntegrationConfig(
-                                      integration.key,
-                                      'apiKey',
-                                      e.target.value
-                                    )
-                                  }
-                                  className="mt-1"
-                                />
-                              </div>
-                              <div>
-                                <Label htmlFor={`${integration.key}-apiUrl`} className="text-sm">
-                                  API URL / Instance
-                                </Label>
-                                <Input
-                                  id={`${integration.key}-apiUrl`}
-                                  type="url"
-                                  placeholder="https://api.example.com"
-                                  value={config.apiUrl || ''}
-                                  onChange={(e) =>
-                                    updateIntegrationConfig(
-                                      integration.key,
-                                      'apiUrl',
-                                      e.target.value
-                                    )
-                                  }
-                                  className="mt-1"
-                                />
-                              </div>
-                            </div>
-                            <div>
-                              <Label htmlFor={`${integration.key}-webhook`} className="text-sm">
-                                Webhook URL (Optional)
-                              </Label>
-                              <Input
-                                id={`${integration.key}-webhook`}
-                                type="url"
-                                placeholder="https://your-app.com/webhooks/..."
-                                value={config.webhookUrl || ''}
-                                onChange={(e) =>
-                                  updateIntegrationConfig(
-                                    integration.key,
-                                    'webhookUrl',
-                                    e.target.value
-                                  )
-                                }
-                                className="mt-1"
-                              />
-                            </div>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => testConnection(integration.label)}
-                              disabled={testingConnection === integration.label}
-                              className="gap-2"
-                            >
-                              {testingConnection === integration.label ? (
-                                <>
-                                  <RefreshCw className="w-3 h-3 animate-spin" />
-                                  Testing...
-                                </>
-                              ) : (
-                                <>
-                                  <CheckCircle2 className="w-3 h-3" />
-                                  Test Connection
-                                </>
-                              )}
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
+              <div className="space-y-4 max-w-2xl">
+                <div>
+                  <Label htmlFor="companyName">Company Name</Label>
+                  <Input
+                    id="companyName"
+                    type="text"
+                    placeholder="e.g., Smith & Associates CPA"
+                    value={settings.companyName || ''}
+                    onChange={(e) => setSettings({ ...settings, companyName: e.target.value })}
+                    className="mt-1"
+                  />
+                  <p className="text-sm text-slate-500 mt-1">
+                    This name will appear in the header and throughout the client portal
+                  </p>
                 </div>
-              </Card>
-            ))}
+              </div>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="integrations" className="space-y-6">
+            {integrationCategories.map((category) => {
+              const CategoryIcon = category.icon;
+              return (
+                <Card key={category.name} className="p-6">
+                  <div className="flex items-center gap-3 mb-1">
+                    <div className="p-2 bg-blue-100 rounded-lg">
+                      <CategoryIcon className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <h2 className="text-slate-900">{category.name}</h2>
+                  </div>
+                  <p className="text-slate-600 text-sm mb-6 ml-14">
+                    Connect your {category.name.toLowerCase()} tools
+                  </p>
+
+                  <div className="space-y-4">
+                    {category.integrations.map((integration) => {
+                      const config =
+                        settings.integrations[
+                          integration.key as keyof typeof settings.integrations
+                        ];
+                      const isEnabled = config.enabled;
+
+                      return (
+                        <div
+                          key={integration.key}
+                          className="border border-slate-200 rounded-lg p-4 hover:border-blue-300 transition-colors"
+                        >
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="flex items-start gap-3 flex-1">
+                              {/* Company Logo */}
+                              <div className="w-10 h-10 rounded-lg bg-white border border-slate-200 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                <img
+                                  src={`https://logo.clearbit.com/${integration.domain}`}
+                                  alt={`${integration.label} logo`}
+                                  className="w-8 h-8 object-contain"
+                                  onError={(e) => {
+                                    // Fallback if logo fails to load
+                                    e.currentTarget.style.display = 'none';
+                                    const fallback = e.currentTarget.nextElementSibling;
+                                    if (fallback) (fallback as HTMLElement).style.display = 'flex';
+                                  }}
+                                />
+                                <span className="text-sm text-slate-600 hidden items-center justify-center w-full h-full">
+                                  {integration.label.split(' ').map(w => w[0]).join('').slice(0, 2)}
+                                </span>
+                              </div>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-1">
+                                  <h3 className="text-slate-900">{integration.label}</h3>
+                                  {isEnabled ? (
+                                    <Badge className="bg-green-100 text-green-700">
+                                      <CheckCircle2 className="w-3 h-3 mr-1" />
+                                      Connected
+                                    </Badge>
+                                  ) : (
+                                    <Badge variant="secondary" className="bg-slate-100 text-slate-600">
+                                      <XCircle className="w-3 h-3 mr-1" />
+                                      Disconnected
+                                    </Badge>
+                                  )}
+                                </div>
+                                <p className="text-sm text-slate-600">{integration.description}</p>
+                              </div>
+                            </div>
+                            <Switch
+                              checked={isEnabled}
+                              onCheckedChange={() => toggleIntegration(integration.key)}
+                            />
+                          </div>
+
+                          {isEnabled && (
+                            <div className="pt-3 border-t border-slate-200 space-y-3 ml-13">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div>
+                                  <Label htmlFor={`${integration.key}-apiKey`} className="text-sm">
+                                    API Key / Credentials
+                                  </Label>
+                                  <Input
+                                    id={`${integration.key}-apiKey`}
+                                    type="password"
+                                    placeholder="Enter API key..."
+                                    value={config.apiKey || ''}
+                                    onChange={(e) =>
+                                      updateIntegrationConfig(
+                                        integration.key,
+                                        'apiKey',
+                                        e.target.value
+                                      )
+                                    }
+                                    className="mt-1"
+                                  />
+                                </div>
+                                <div>
+                                  <Label htmlFor={`${integration.key}-apiUrl`} className="text-sm">
+                                    API URL / Instance
+                                  </Label>
+                                  <Input
+                                    id={`${integration.key}-apiUrl`}
+                                    type="url"
+                                    placeholder="https://api.example.com"
+                                    value={config.apiUrl || ''}
+                                    onChange={(e) =>
+                                      updateIntegrationConfig(
+                                        integration.key,
+                                        'apiUrl',
+                                        e.target.value
+                                      )
+                                    }
+                                    className="mt-1"
+                                  />
+                                </div>
+                              </div>
+                              <div>
+                                <Label htmlFor={`${integration.key}-webhook`} className="text-sm">
+                                  Webhook URL (Optional)
+                                </Label>
+                                <Input
+                                  id={`${integration.key}-webhook`}
+                                  type="url"
+                                  placeholder="https://your-app.com/webhooks/..."
+                                  value={config.webhookUrl || ''}
+                                  onChange={(e) =>
+                                    updateIntegrationConfig(
+                                      integration.key,
+                                      'webhookUrl',
+                                      e.target.value
+                                    )
+                                  }
+                                  className="mt-1"
+                                />
+                              </div>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => testConnection(integration.label)}
+                                disabled={testingConnection === integration.label}
+                                className="gap-2"
+                              >
+                                {testingConnection === integration.label ? (
+                                  <>
+                                    <RefreshCw className="w-3 h-3 animate-spin" />
+                                    Testing...
+                                  </>
+                                ) : (
+                                  <>
+                                    <CheckCircle2 className="w-3 h-3" />
+                                    Test Connection
+                                  </>
+                                )}
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </Card>
+              );
+            })}
           </TabsContent>
 
           <TabsContent value="workflow" className="space-y-6">

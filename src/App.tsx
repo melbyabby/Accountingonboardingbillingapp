@@ -17,11 +17,35 @@ export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [accessToken, setAccessToken] = useState<string>('');
   const [loading, setLoading] = useState(true);
+  const [companyName, setCompanyName] = useState<string>('');
 
   // Check for existing session on mount
   useEffect(() => {
     checkSession();
+    fetchCompanyName();
   }, []);
+
+  const fetchCompanyName = async () => {
+    try {
+      const response = await fetch(
+        'https://tcmmddpcihkohnytxmeh.supabase.co/functions/v1/make-server-657f9657/settings',
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('access_token') || ''}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.settings?.companyName) {
+          setCompanyName(result.settings.companyName);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching company name:', error);
+    }
+  };
 
   const checkSession = async () => {
     try {
@@ -69,7 +93,7 @@ export default function App() {
         <div className="bg-white border-b border-slate-200 px-6 py-3">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <h1 className="text-slate-900">CPA Firm Portal</h1>
+              <h1 className="text-slate-900">{companyName || 'CPA Firm Portal'}</h1>
               <div className="flex items-center gap-2 text-sm text-slate-600">
                 <button
                   onClick={() => setIsAdmin(false)}

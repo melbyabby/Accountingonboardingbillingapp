@@ -106,29 +106,7 @@ This guide provides comprehensive information about all available integrations i
 
 ---
 
-### 4. Client Portal & Communication
-
-**Liscio**
-- Modern client communication and collaboration platform
-- Secure messaging, document exchange, and reminders
-- API Access: Liscio API available (contact support)
-- Use Case: Auto-invite clients to portal after engagement letter signing
-
-**SafeSend Exchange**
-- Client portal and document exchange
-- Secure communication and file sharing
-- API Access: Contact SafeSend for integration options
-- Use Case: Client document requests and secure messaging
-
-**TaxDome Portal**
-- Built-in client portal within TaxDome
-- Document sharing, e-signatures, and payment processing
-- API Access: Available via TaxDome API
-- Use Case: Complete client portal experience
-
----
-
-### 5. Accounting Software
+### 4. Accounting Software
 
 **QuickBooks Online** (Intuit)
 - Leading cloud accounting software
@@ -148,9 +126,15 @@ This guide provides comprehensive information about all available integrations i
 - API Access: Sage Intacct Web Services API
 - Use Case: Financial data integration for larger clients
 
+**FreshBooks**
+- Cloud accounting software for small businesses
+- Invoicing, expense tracking, and time tracking
+- API Access: FreshBooks API (OAuth 2.0)
+- Use Case: Small business client accounting and invoicing integration
+
 ---
 
-### 6. E-Signature Solutions
+### 5. E-Signature Solutions
 
 **DocuSign**
 - Leading e-signature platform
@@ -172,7 +156,7 @@ This guide provides comprehensive information about all available integrations i
 
 ---
 
-### 7. Payment Processing
+### 6. Payment Processing
 
 **LawPay**
 - IOLTA-compliant payment processing for professionals
@@ -200,7 +184,7 @@ This guide provides comprehensive information about all available integrations i
 
 ---
 
-### 8. Time & Billing
+### 7. Time & Billing
 
 **QuickBooks Time** (formerly TSheets)
 - Time tracking integrated with QuickBooks
