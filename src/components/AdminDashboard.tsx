@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, Clock, CheckCircle2, AlertCircle, Plus, Search } from 'lucide-react';
+import { Users, Clock, CheckCircle2, AlertCircle, Plus, Search, Settings } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
@@ -106,10 +106,16 @@ export function AdminDashboard() {
               <h1 className="text-slate-900 mb-2">Client Onboarding Dashboard</h1>
               <p className="text-slate-600">Manage new client setup and tracking</p>
             </div>
-            <Button className="gap-2" onClick={() => setAddDialogOpen(true)}>
-              <Plus className="w-4 h-4" />
-              Add Manual Client
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" className="gap-2" onClick={() => navigate('/admin/settings')}>
+                <Settings className="w-4 h-4" />
+                Settings
+              </Button>
+              <Button className="gap-2" onClick={() => setAddDialogOpen(true)}>
+                <Plus className="w-4 h-4" />
+                Add Manual Client
+              </Button>
+            </div>
           </div>
         </div>
 

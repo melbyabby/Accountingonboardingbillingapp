@@ -7,8 +7,9 @@ import { ClientPortal } from './components/ClientPortal';
 import { AdminDashboard } from './components/AdminDashboard';
 import { AdminClientSetup } from './components/AdminClientSetup';
 import { AdminBillingScreen } from './components/AdminBillingScreen';
+import { AdminSettings } from './components/AdminSettings';
 import { AdminLogin } from './components/AdminLogin';
-import { LogOut } from 'lucide-react';
+import { LogOut, Settings } from 'lucide-react';
 import { Button } from './components/ui/button';
 
 export default function App() {
@@ -112,6 +113,7 @@ export default function App() {
               <Route path="/" element={<AdminDashboard />} />
               <Route path="/admin/client/:id" element={<AdminClientSetup />} />
               <Route path="/admin/billing/:id" element={<AdminBillingScreen />} />
+              <Route path="/admin/settings" element={<AdminSettings />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </>
           )}
