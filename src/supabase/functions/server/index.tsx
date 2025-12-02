@@ -73,9 +73,9 @@ app.get("/make-server-657f9657/clients", async (c) => {
       return c.json({ error: 'Unauthorized' }, 401);
     }
 
-    // Get all clients from KV store
-    const clients = await kv.getByPrefix('client:');
-    
+    // Get all clients from KV store (with RLS)
+    const clients = await kv.getByPrefix('client:', accessToken);
+
     return c.json({ clients: clients || [] });
   } catch (error) {
     console.log(`Error fetching clients: ${error}`);
@@ -109,8 +109,8 @@ app.post("/make-server-657f9657/clients", async (c) => {
       createdAt: new Date().toISOString(),
     };
 
-    // Store in KV
-    await kv.set(`client:${clientId}`, client);
+    // Store in KV (with RLS)
+    await kv.set(`client:${clientId}`, client, accessToken);
 
     return c.json({ client });
   } catch (error) {
@@ -134,20 +134,20 @@ app.put("/make-server-657f9657/clients/:id", async (c) => {
     const clientId = c.req.param('id');
     const updates = await c.req.json();
 
-    // Get existing client
-    const existingClient = await kv.get(`client:${clientId}`);
+    // Get existing client (with RLS)
+    const existingClient = await kv.get(`client:${clientId}`, accessToken);
     if (!existingClient) {
       return c.json({ error: 'Client not found' }, 404);
     }
 
-    // Update client
+    // Update client (with RLS)
     const updatedClient = {
       ...existingClient,
       ...updates,
       updatedAt: new Date().toISOString(),
     };
 
-    await kv.set(`client:${clientId}`, updatedClient);
+    await kv.set(`client:${clientId}`, updatedClient, accessToken);
 
     return c.json({ client: updatedClient });
   } catch (error) {
@@ -169,8 +169,9 @@ app.delete("/make-server-657f9657/clients/:id", async (c) => {
     }
 
     const clientId = c.req.param('id');
-    
-    await kv.del(`client:${clientId}`);
+
+    // Delete client (with RLS)
+    await kv.del(`client:${clientId}`, accessToken);
 
     return c.json({ success: true });
   } catch (error) {
@@ -193,9 +194,9 @@ app.get("/make-server-657f9657/settings", async (c) => {
       return c.json({ error: 'Unauthorized' }, 401);
     }
 
-    // Get settings from KV store
-    const settings = await kv.get('app:settings');
-    
+    // Get settings from KV store (with RLS)
+    const settings = await kv.get('app:settings', accessToken);
+
     return c.json({ settings: settings || null });
   } catch (error) {
     console.log(`Error fetching settings: ${error}`);
@@ -217,12 +218,12 @@ app.post("/make-server-657f9657/settings", async (c) => {
 
     const { settings } = await c.req.json();
 
-    // Store settings in KV
+    // Store settings in KV (with RLS)
     await kv.set('app:settings', {
       ...settings,
       updatedAt: new Date().toISOString(),
       updatedBy: user.id,
-    });
+    }, accessToken);
 
     return c.json({ success: true });
   } catch (error) {

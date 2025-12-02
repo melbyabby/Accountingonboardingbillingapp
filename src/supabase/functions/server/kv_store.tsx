@@ -10,16 +10,37 @@ CREATE TABLE kv_store_657f9657 (
 // View at https://supabase.com/dashboard/project/tcmmddpcihkohnytxmeh/database/tables
 
 // This file provides a simple key-value interface for storing Figma Make data. It should be adequate for most small-scale use cases.
+// Modified to support Row Level Security (RLS) by accepting user access tokens.
 import { createClient } from "jsr:@supabase/supabase-js@2.49.8";
 
-const client = () => createClient(
+// Create a Supabase client using service role key (bypasses RLS)
+const serviceRoleClient = () => createClient(
   Deno.env.get("SUPABASE_URL"),
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"),
 );
 
+// Create a Supabase client using user's access token (respects RLS)
+const userClient = (accessToken: string) => createClient(
+  Deno.env.get("SUPABASE_URL"),
+  Deno.env.get("SUPABASE_ANON_KEY"),
+  {
+    global: {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    },
+  }
+);
+
+// Get the appropriate client based on whether an access token is provided
+const client = (accessToken?: string) => {
+  return accessToken ? userClient(accessToken) : serviceRoleClient();
+};
+
 // Set stores a key-value pair in the database.
-export const set = async (key: string, value: any): Promise<void> => {
-  const supabase = client()
+// Pass accessToken to respect RLS, or omit for service role access.
+export const set = async (key: string, value: any, accessToken?: string): Promise<void> => {
+  const supabase = client(accessToken)
   const { error } = await supabase.from("kv_store_657f9657").upsert({
     key,
     value
@@ -30,8 +51,9 @@ export const set = async (key: string, value: any): Promise<void> => {
 };
 
 // Get retrieves a key-value pair from the database.
-export const get = async (key: string): Promise<any> => {
-  const supabase = client()
+// Pass accessToken to respect RLS, or omit for service role access.
+export const get = async (key: string, accessToken?: string): Promise<any> => {
+  const supabase = client(accessToken)
   const { data, error } = await supabase.from("kv_store_657f9657").select("value").eq("key", key).maybeSingle();
   if (error) {
     throw new Error(error.message);
@@ -40,8 +62,9 @@ export const get = async (key: string): Promise<any> => {
 };
 
 // Delete deletes a key-value pair from the database.
-export const del = async (key: string): Promise<void> => {
-  const supabase = client()
+// Pass accessToken to respect RLS, or omit for service role access.
+export const del = async (key: string, accessToken?: string): Promise<void> => {
+  const supabase = client(accessToken)
   const { error } = await supabase.from("kv_store_657f9657").delete().eq("key", key);
   if (error) {
     throw new Error(error.message);
@@ -49,8 +72,9 @@ export const del = async (key: string): Promise<void> => {
 };
 
 // Sets multiple key-value pairs in the database.
-export const mset = async (keys: string[], values: any[]): Promise<void> => {
-  const supabase = client()
+// Pass accessToken to respect RLS, or omit for service role access.
+export const mset = async (keys: string[], values: any[], accessToken?: string): Promise<void> => {
+  const supabase = client(accessToken)
   const { error } = await supabase.from("kv_store_657f9657").upsert(keys.map((k, i) => ({ key: k, value: values[i] })));
   if (error) {
     throw new Error(error.message);
@@ -58,8 +82,9 @@ export const mset = async (keys: string[], values: any[]): Promise<void> => {
 };
 
 // Gets multiple key-value pairs from the database.
-export const mget = async (keys: string[]): Promise<any[]> => {
-  const supabase = client()
+// Pass accessToken to respect RLS, or omit for service role access.
+export const mget = async (keys: string[], accessToken?: string): Promise<any[]> => {
+  const supabase = client(accessToken)
   const { data, error } = await supabase.from("kv_store_657f9657").select("value").in("key", keys);
   if (error) {
     throw new Error(error.message);
@@ -68,8 +93,9 @@ export const mget = async (keys: string[]): Promise<any[]> => {
 };
 
 // Deletes multiple key-value pairs from the database.
-export const mdel = async (keys: string[]): Promise<void> => {
-  const supabase = client()
+// Pass accessToken to respect RLS, or omit for service role access.
+export const mdel = async (keys: string[], accessToken?: string): Promise<void> => {
+  const supabase = client(accessToken)
   const { error } = await supabase.from("kv_store_657f9657").delete().in("key", keys);
   if (error) {
     throw new Error(error.message);
@@ -77,8 +103,9 @@ export const mdel = async (keys: string[]): Promise<void> => {
 };
 
 // Search for key-value pairs by prefix.
-export const getByPrefix = async (prefix: string): Promise<any[]> => {
-  const supabase = client()
+// Pass accessToken to respect RLS, or omit for service role access.
+export const getByPrefix = async (prefix: string, accessToken?: string): Promise<any[]> => {
+  const supabase = client(accessToken)
   const { data, error } = await supabase.from("kv_store_657f9657").select("key, value").like("key", prefix + "%");
   if (error) {
     throw new Error(error.message);
